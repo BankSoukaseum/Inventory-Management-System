@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Add Item</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Add New Item</h2>
+
+        <form method="post">
+            <label>Item Name</label>
+            <input type="text" name="name" required>
+
+            <label>Category</label>
+            <input type="text" name="category" required>
+
+            <label>Initial Quantity</label>
+            <input type="number" name="quantity" min="0" value="0" required>
+
+            <label>Unit</label>
+            <input type="text" name="unit" required>
+
+            <label>Minimum Stock Level</label>
+            <input type="number" name="min_level" min="0" required>
+
+            <button class="btn btn-update" type="submit">Add Item</button>
+            <a class="btn btn-back" href="/">Cancel</a>
+        </form>
+    </div>
+
+</body>
+
+</html>

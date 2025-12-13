@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Update Stock</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Update Stock — {{ item['name'] }}</h2>
+
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form method="post">
+            <label>Action</label>
+            <select name="action">
+                <option value="used">Used</option>
+                <option value="received">Received</option>
+            </select>
+
+            <label>Amount</label>
+            <input type="number" name="amount" min="1" required>
+
+            <button class="btn btn-update" type="submit">Submit</button>
+            <a class="btn btn-back" href="/">Back</a>
+        </form>
+    </div>
+
+</body>
+
+</html>

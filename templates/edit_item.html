@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Edit Item</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Edit Item</h2>
+
+        <form method="post">
+            <label>Item Name</label>
+            <input type="text" name="name" value="{{ item['name'] }}" required>
+
+            <label>Category</label>
+            <input type="text" name="category" value="{{ item['category'] }}" required>
+
+            <label>Unit</label>
+            <input type="text" name="unit" value="{{ item['unit'] }}" required>
+
+            <label>Minimum Stock Level</label>
+            <input type="number" name="min_level" value="{{ item['min_level'] }}" min="0" required>
+
+            <button class="btn btn-update" type="submit">Save Changes</button>
+            <a class="btn btn-back" href="/">Cancel</a>
+        </form>
+    </div>
+
+</body>
+
+</html>

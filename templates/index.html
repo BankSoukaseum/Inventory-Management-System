@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Inventory</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Bubble Tea Inventory</h1>
+        <form method="get">
+            <label for="category">Filter by category:</label>
+            <a class="btn btn-update" href="/add">+ Add Item</a>
+            <select name="category" onchange="this.form.submit()">
+                <option value="">All Categories</option>
+        
+                {% for cat in categories %}
+                <option value="{{ cat['category'] }}" {% if selected_category==cat['category'] %}selected{% endif %}>
+                    {{ cat['category'] }}
+                </option>
+                {% endfor %}
+            </select>
+        </form>
+
+
+        <table>
+            <tr>
+                <th>Item</th>
+                <th>Category</th>
+                <th>Quantity</th>
+                <th>Unit</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+
+            {% for item in items %}
+            <tr class="{{ item['status'] }}">
+                <td>{{ item['name'] }}</td>
+                <td>{{ item['category'] }}</td>
+                <td>{{ item['quantity'] }}</td>
+                <td>{{ item['unit'] }}</td>
+                <td>
+                    {% if item['status'] == 'LOW' %}
+                    <span class="status-badge status-low">LOW</span>
+                    {% else %}
+                    <span class="status-badge status-ok">OK</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a class="btn btn-update" href="/update/{{ item['id'] }}">Stock</a>
+                    <a class="btn btn-back" href="/edit/{{ item['id'] }}">Edit</a>
+                    <a class="btn btn-back" href="/delete/{{ item['id'] }}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+</body>
+
+</html>
