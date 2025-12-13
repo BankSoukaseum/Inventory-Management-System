@@ -166,6 +166,7 @@ def edit_item(id):
     )
 
 @app.route('/add', methods=['GET', 'POST'])
+@app.route('/add', methods=['GET', 'POST'])
 def add_item():
     if request.method == 'POST':
         name = request.form['name']
@@ -185,24 +186,27 @@ def add_item():
         conn.commit()
         conn.close()
 
+        flash(f"{name} added successfully", "success")
         return redirect(url_for('index'))
 
-    # ✅ FIX: open DB before using it
+    # GET request
     conn = get_db_connection()
     categories = conn.execute(
         'SELECT DISTINCT category FROM inventory'
     ).fetchall()
     conn.close()
-    flash(f"{name} added successfully", "success")
 
     return render_template('add_item.html', categories=categories)
 
 
 @app.route('/delete/<int:id>', methods=['GET', 'POST'])
 def delete_item(id):
-   # if session.get('role') != 'admin':
-     #    return redirect(url_for('index'))
     conn = get_db_connection()
+
+    item = conn.execute(
+        'SELECT * FROM inventory WHERE id = ?',
+        (id,)
+    ).fetchone()
 
     if request.method == 'POST':
         conn.execute(
@@ -211,17 +215,11 @@ def delete_item(id):
         )
         conn.commit()
         conn.close()
+
+        flash(f"{item['name']} deleted successfully", "success")
         return redirect(url_for('index'))
 
-    item = conn.execute(
-        'SELECT * FROM inventory WHERE id = ?',
-        (id,)
-    ).fetchone()
     conn.close()
-    
-
-    
-    flash(f"{item['name']} deleted successfully", "success")
     return render_template('delete_item.html', item=item)
 
 
