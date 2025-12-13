@@ -1,9 +1,16 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
+from werkzeug.security import generate_password_hash, check_password_hash
+
 import sqlite3
 
 app = Flask(__name__)
 app.secret_key = "super-secret-key-change-this"
 
+def admin_required():
+    if session.get('role') != 'admin':
+        flash("Admin access required", "error")
+        return False
+    return True
 
 def get_db_connection():
     conn = sqlite3.connect('inventory.db')
@@ -14,6 +21,8 @@ def get_db_connection():
 @app.route('/')
 @app.route('/')
 def index():
+    if 'user' not in session:
+        return redirect(url_for('login'))
     category = request.args.get('category')
 
     conn = get_db_connection()
@@ -121,9 +130,9 @@ def update_stock(id):
 
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit_item(id):
-  #   if session.get('role') != 'admin':
-   #      return redirect(url_for('index'))
-
+    if not admin_required():
+        return redirect(url_for('index'))
+         
     
     conn = get_db_connection()
 
@@ -166,7 +175,6 @@ def edit_item(id):
     )
 
 @app.route('/add', methods=['GET', 'POST'])
-@app.route('/add', methods=['GET', 'POST'])
 def add_item():
     if request.method == 'POST':
         name = request.form['name']
@@ -201,6 +209,8 @@ def add_item():
 
 @app.route('/delete/<int:id>', methods=['GET', 'POST'])
 def delete_item(id):
+    if not admin_required():
+        return redirect(url_for('index'))
     conn = get_db_connection()
 
     item = conn.execute(
@@ -226,8 +236,8 @@ def delete_item(id):
 
 @app.route('/audit')
 def audit():
-  #  if session.get('role') != 'admin':
-    #    return redirect(url_for('index'))
+    if not admin_required():
+        return redirect(url_for('index'))
 
     conn = get_db_connection()
     logs = conn.execute(
@@ -240,6 +250,70 @@ def audit():
     conn.close()
 
     return render_template('audit.html', logs=logs)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        conn = get_db_connection()
+        user = conn.execute(
+            "SELECT * FROM users WHERE username = ?",
+            (username,)
+        ).fetchone()
+        conn.close()
+
+        if user and check_password_hash(user['password_hash'], password):
+            session['user'] = user['username']
+            session['role'] = user['role']
+
+            flash("Login successful", "success")
+            return redirect(url_for('index'))
+
+        flash("Invalid username or password", "error")
+
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash("Logged out successfully", "success")
+    return redirect(url_for('login'))
+
+@app.route('/create-user', methods=['GET', 'POST'])
+def create_user():
+    # 🔐 Admin-only access
+    if session.get('role') != 'admin':
+        flash("Admin access required", "error")
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        role = request.form['role']
+
+        password_hash = generate_password_hash(password)
+
+        conn = get_db_connection()
+        try:
+            conn.execute(
+                '''
+                INSERT INTO users (username, password_hash, role)
+                VALUES (?, ?, ?)
+                ''',
+                (username, password_hash, role)
+            )
+            conn.commit()
+            flash(f"User '{username}' created successfully", "success")
+            return redirect(url_for('index'))
+        except sqlite3.IntegrityError:
+            flash("Username already exists", "error")
+        finally:
+            conn.close()
+
+    return render_template('create_user.html')
+
 
 if __name__ == '__main__':
     app.run()(host='0.0.0.0', port=10000)

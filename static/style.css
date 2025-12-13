@@ -205,11 +205,12 @@ button.btn {
     animation: fadeInOut 3s ease-in-out forwards;
 }
 
-.flash-success {
+/* ✅ MATCH FLASK FLASH CATEGORIES */
+.flash.success {
     background-color: #4caf50;
 }
 
-.flash-error {
+.flash.error {
     background-color: #f44336;
 }
 
@@ -232,12 +233,4 @@ button.btn {
         opacity: 0;
         transform: translateY(-10px);
     }
-}
-
-.flash-success {
-    background-color: #4caf50;
-}
-
-.flash-error {
-    background-color: #f44336;
 }
