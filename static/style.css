@@ -59,12 +59,12 @@ td {
 }
 
 .status-ok {
-    background: #2ecc71;
+    background: #00ff6a;
     color: white;
 }
 
 .status-low {
-    background: #e74c3c;
+    background: #ff0000;
     color: white;
 }
 
@@ -122,4 +122,122 @@ select {
     margin-top: 10px;
     margin-bottom: 20px;
     max-width: 250px;
+}
+
+.category-row {
+    background-color: #f0f2f5;
+    font-weight: bold;
+    text-align: left;
+    padding: 12px;
+    font-size: 15px;
+}
+
+.category-row {
+    background-color: #f0f2f5;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.category-row:hover {
+    background-color: #e2e6ea;
+}
+
+.item-row {
+    transition: all 0.2s ease;
+}
+
+
+tr.LOW:hover {
+    background-color: #ff9595;
+}
+
+tr.OK:hover {
+    background-color: #388e3c;
+}
+/* Status badges (stand out from row colour) */
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* LOW badge – darker alert red */
+.status-low {
+    background-color: #b71c1c;
+    /* dark red */
+    color: #ffffff;
+}
+
+/* OK badge – darker green */
+.status-ok {
+    background-color: #1b5e20;
+    /* dark green */
+    color: #ffffff;
+}
+
+button.btn {
+    margin-left: 6px;
+}
+
+/* Flash popup */
+.flash-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    text-align: center;
+}
+
+.flash {
+    min-width: 300px;
+    max-width: 400px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    color: white;
+    font-weight: bold;
+    line-height: 1.4;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+    animation: fadeInOut 3s ease-in-out forwards;
+}
+
+.flash-success {
+    background-color: #4caf50;
+}
+
+.flash-error {
+    background-color: #f44336;
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    10% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+.flash-success {
+    background-color: #4caf50;
+}
+
+.flash-error {
+    background-color: #f44336;
 }

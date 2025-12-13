@@ -16,7 +16,13 @@
             <input type="text" name="name" value="{{ item['name'] }}" required>
 
             <label>Category</label>
-            <input type="text" name="category" value="{{ item['category'] }}" required>
+        <select name="category" required>
+            {% for cat in categories %}
+            <option value="{{ cat['category'] }}" {% if cat['category']==item['category'] %}selected{% endif %}>
+                {{ cat['category'] }}
+            </option>
+            {% endfor %}
+        </select>
 
             <label>Unit</label>
             <input type="text" name="unit" value="{{ item['unit'] }}" required>

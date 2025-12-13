@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 
+
 <head>
     <title>Inventory</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -9,10 +10,26 @@
 <body>
 
     <div class="container">
-        <h1>Bubble Tea Inventory</h1>
+        <h1>Machi Inventory Update</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-container">
+            {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
         <form method="get">
             <label for="category">Filter by category:</label>
             <a class="btn btn-update" href="/add">+ Add Item</a>
+            <a class="btn btn-back" href="/audit">Audit Log</a>
+            
+            <button type="button" class="btn btn-back" onclick="expandAll()">Expand All</button>
+            <button type="button" class="btn btn-back" onclick="collapseAll()">Collapse All</button>
             <select name="category" onchange="this.form.submit()">
                 <option value="">All Categories</option>
         
@@ -24,6 +41,9 @@
             </select>
         </form>
 
+<div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search items..." onkeyup="searchItems()">
+</div>
 
         <table>
             <tr>
@@ -35,28 +55,106 @@
                 <th>Action</th>
             </tr>
 
-            {% for item in items %}
-            <tr class="{{ item['status'] }}">
-                <td>{{ item['name'] }}</td>
-                <td>{{ item['category'] }}</td>
-                <td>{{ item['quantity'] }}</td>
-                <td>{{ item['unit'] }}</td>
-                <td>
-                    {% if item['status'] == 'LOW' %}
-                    <span class="status-badge status-low">LOW</span>
-                    {% else %}
-                    <span class="status-badge status-ok">OK</span>
-                    {% endif %}
-                </td>
-                <td>
-                    <a class="btn btn-update" href="/update/{{ item['id'] }}">Stock</a>
-                    <a class="btn btn-back" href="/edit/{{ item['id'] }}">Edit</a>
-                    <a class="btn btn-back" href="/delete/{{ item['id'] }}">Delete</a>
-                </td>
-            </tr>
-            {% endfor %}
+        {% set ns = namespace(current_category=None) %}
+        
+        {% for item in items %}
+        {% if item['category'] != ns.current_category %}
+        <tr class="category-row" data-category-key="{{ item['category']
+                | lower
+                | replace(' ', '-')
+                | replace('&', '')
+            }}" data-expanded="true" onclick="toggleCategory(this)">
+
+
+
+            <td colspan="6">
+                <span class="arrow">▼</span> {{ item['category'] }}
+            </td>
+        </tr>
+        {% set ns.current_category = item['category'] %}
+        {% endif %}
+        
+        <tr class="item-row {{ item['status'] }} category-{{ item['category']
+            | lower
+            | replace(' ', '-')
+            | replace('&', '')
+        }}">
+
+            <td>{{ item['name'] }}</td>
+            <td>{{ item['category'] }}</td>
+            <td>{{ item['quantity'] }}</td>
+            <td>{{ item['unit'] }}</td>
+            <td>
+                {% if item['status'] == 'LOW' %}
+                <span class="status-badge status-low">LOW</span>
+                {% else %}
+                <span class="status-badge status-ok">OK</span>
+                {% endif %}
+            </td>
+            <td>
+                <a class="btn btn-update" href="/update/{{ item['id'] }}">Stock</a>
+                <a class="btn btn-back" href="/edit/{{ item['id'] }}">Edit</a>
+                <a class="btn btn-back" href="/delete/{{ item['id'] }}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+
+
         </table>
     </div>
+<script>
+    function toggleCategory(headerRow) {
+        const key = headerRow.dataset.categoryKey;
+        const rows = document.getElementsByClassName('category-' + key);
+        const arrow = headerRow.querySelector('.arrow');
+
+        const expanded = headerRow.dataset.expanded === "true";
+
+        for (let row of rows) {
+            row.style.display = expanded ? 'none' : '';
+        }
+
+        headerRow.dataset.expanded = expanded ? "false" : "true";
+        arrow.textContent = expanded ? '▶' : '▼';
+    }
+
+    /* NEW: Expand all categories */
+    function expandAll() {
+        const headers = document.getElementsByClassName('category-row');
+
+        for (let header of headers) {
+            if (header.dataset.expanded === "false") {
+                toggleCategory(header);
+            }
+        }
+    }
+
+    /* NEW: Collapse all categories */
+    function collapseAll() {
+        const headers = document.getElementsByClassName('category-row');
+
+        for (let header of headers) {
+            if (header.dataset.expanded === "true") {
+                toggleCategory(header);
+            }
+        }
+    }
+
+    function searchItems() {
+            const input = document.getElementById("searchInput").value.toLowerCase();
+            const rows = document.getElementsByClassName("item-row");
+
+            for (let row of rows) {
+                const nameCell = row.getElementsByTagName("td")[0];
+                const text = nameCell.textContent.toLowerCase();
+                row.style.display = text.includes(input) ? "" : "none";
+            }
+        }
+
+</script>
+
+
+
 
 </body>
 

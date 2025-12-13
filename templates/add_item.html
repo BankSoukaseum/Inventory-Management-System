@@ -16,7 +16,14 @@
             <input type="text" name="name" required>
 
             <label>Category</label>
-            <input type="text" name="category" required>
+            <select name="category" required>
+                {% for cat in categories %}
+                <option value="{{ cat['category'] }}">
+                    {{ cat['category'] }}
+                </option>
+                {% endfor %}
+            </select>
+
 
             <label>Initial Quantity</label>
             <input type="number" name="quantity" min="0" value="0" required>
