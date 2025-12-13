@@ -119,8 +119,8 @@
                 {% endif %}
             </td>
             <td>
-                {% if session.get('role') == 'admin' %}
                 <a class="btn btn-update" href="/update/{{ item['id'] }}">Stock</a>
+                {% if session.get('role') == 'admin' %}
                 <a class="btn btn-back" href="/edit/{{ item['id'] }}">Edit</a>
                 <a class="btn btn-back" href="/delete/{{ item['id'] }}">Delete</a>
                 {% else %}
