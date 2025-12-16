@@ -11,7 +11,7 @@ application rather than remaining purely theoretical.
 
 ## Live Demo
 
-🔗 Live Site: 
+🔗 Live Site: https://machi-machi-inventory.onrender.com
 🔗 GitHub Repository: (this repository)
 
 ---
